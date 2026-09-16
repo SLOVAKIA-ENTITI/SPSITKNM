@@ -1,283 +1,258 @@
+[SmartHUD.md](https://github.com/user-attachments/files/32302006/SmartHUD.md)
+# SmartHUD -- Prediktívny HUD asistent s nastaviteľnými režimami
 
-# Názov projektu (+ meno riešiteľa)
-- **Názov projektu**: [Názov projektu]
-- **Meno riešiteľa**: [Meno študenta]
-- **Login**: [Login]
+**Názov projektu:** SmartHUD -- Prediktívny HUD asistent pre plynulú jazdu, monitoring bezpečnosti a športovú jazdu (ECO / RACE / PERFORMANCE)
 
----
+**Meno riešiteľa:** Matúš Paškala
+
+**Login:**
 
 ## Seznam kapitol - částí projektu
-1. Úvod
-2. Dôvod a okolnosti zavedenia riešenia
-3. Popis projektu (slovné zadanie, popis od zákazníka)
-4. Analýza požiadaviek
-5. Systémové požiadavky (FURPS)
-6. Kritické situácie
-7. Hranice systému
-8. Kontext prostredia
-9. Charakteristika aktérov
+
+1.  Úvod
+
+2.  Dôvod a okolnosti zavedenia riešenia
+
+3.  Popis projektu (slovné zadanie, popis od zákazníka)
+
+4.  Analýza požiadaviek
+
+5.  Systémové požiadavky (FURPS)
+
+6.  Kritické situácie
+
+7.  Hranice systému
+
+8.  Kontext prostredia
+
+9.  Charakteristika aktérov
+
 10. Use Case diagram
+
 11. Scenáre (Implementácia Use Case)
+
 12. Sekvenčný diagram
+
 13. Triedny diagram
-14. Aktivitný diagram — *bonus*
-15. BPMN diagram — *bonus*
-16. Wireframe kľúčových obrazoviek — *bonus*
+
+14. Aktivitný diagram
+
+15. BPMN diagram
+
+16. Wireframe kľúčových obrazoviek
+
 17. Záver
 
----
+## Popis zmien v dokumente
 
-## Popis zmien v dokumentu
-Tento dokument reflektuje všetky zmeny a vylepšenia, ktoré boli vykonané v predchádzajúcich verziách, ako aj aktualizácie implementácie a návrhu systému.
+**Východisková špecifikácia:** Vytvorenie kompletného počiatočného návrhu systému SmartHUD vrátane integrácie troch jazdných režimov (ECO, RACE, PERFORMANCE).
 
----
+**Hardvérová modularita:** Definícia flexibilného rozhrania zahŕňajúceho základnú 2D variantu (mobilný telefón / samostatný 2D HUD projektor proti prehrievaniu) a prémiovú variantu s laserovým AR-HUD projektorom a 3D šípkami.
 
-## Dôvod a okolnosti zavedenia riešenia
-Tento projekt je navrhnutý s cieľom zlepšiť proces diagnostiky automobilov. Zavedenie jednotného systému pre diagnostiku umožní mechanikom a technikom prístup k rôznym riadiacim jednotkám a ich diagnostickým kódom bez nutnosti používať rozličné doplnkové softvéry. Cieľom je zvýšiť efektivitu, minimalizovať chyby a ušetriť čas pri diagnostike vozidiel.
+**Architektúra a diagramy:** Vypracovanie kompletných systémových požiadaviek, scenárov, Use Case, sekvenčných, triednych, aktivitných a BPMN diagramov pre celú logiku projektu vrátane bezpečnostného modulu.
 
----
+## 1. Úvod
 
-## Slovné zadanie, popis projektu od zákazníka
-Cieľom tohto projektu je vytvoriť prehľadný a intuitívny diagnostický systém pre správu automobilov. Tento systém bude slúžiť na diagnostiku závad na vozidlách a analýzu dát z riadiacich jednotiek (ECU). Funkcionality budú zahŕňať: čítanie diagnostických kódov, zobrazovanie meraných hodnôt, testovanie aktuátorov a predikciu údržbových upozornení.
+SmartHUD je pokročilý asistenčný a bezpečnostný systém pre vodičov, ktorý kombinuje funkcie pre plynulú, úspornú a športovú jazdu. Systém ponúka tri plne nastaviteľné a prepínateľné jazdné režimy:
 
----
+-   **ECO Mód:** Určený pre každodennú plynulú a úspornú jazdu v cestnej premávke s aktívnym vyhodnocovaním bezpečnosti.
 
-## Seznam modulů projektu a jejich významných atributů
-1. **Modul pre čítanie diagnostických kódov (DTC)**
-   - Atribúty: diagnostické kódy, stav vozidla, počet chýb
-   - Unikátna identifikácia objektov: Kód chyby, ID vozidla
+-   **PERFORMANCE Mód:** Určený pre dynamickú jazdu a špeciálne autorizované účely (napr. služobné vozidlá Polície SR v akcii).
 
-2. **Užívateľské rozhranie (UI)**
-   - Atribúty: grafické rozhranie, interaktívne prvky
-   - Unikátna identifikácia objektov: ID užívateľa, ID diagnostického nástroja
+-   **RACE Mód (RaceHUD):** Špecializovaný traťový režim pre navádzanie na brzdné body a ideálnu stopu na uzavretých pretekárskych okruhoch.
 
-3. **Komunikačný modul**
-   - Atribúty: pripojenie k OBD-II, synchronizácia s externými zariadeniami
-   - Unikátna identifikácia objektov: Komunikačné protokoly, ID zariadení
+Systém podporuje flexibilné úrovne hardvérového rozhrania:
 
-4. **Dátový analytický modul**
-   - Atribúty: analýza dát, predikčné modely
-   - Unikátna identifikácia objektov: Predikčný model, ID analýzy
+-   **Základná verzia (Basic / Light 2D):** Ponúka dve hardware alternatívy pre zobrazenie farebného gradientu a piktogramov:
 
-5. **Modul pre aktualizácie softvéru**
-   - Atribúty: verzia softvéru, súbor na aktualizáciu
-   - Unikátna identifikácia objektov: Verzia systému, ID aktualizácie
+    -   *Varianta A (Smartfón + 2D reflexná podložka):* Cenovo najdostupnejšie riešenie využívajúce displej telefónu.
 
----
+    -   *Varianta B (Základný samostatný 2D HUD projektor):* Dedikovaná dostupná zobrazovacia jednotka pripojená k telefónu/OBD, ktorá kompletne rieši a eliminuje riziko prehrievania smartfónu počas letných dní.
 
-## Systémové požiadavky FURPS
-1. **Funkčnosť (Functionality - F)**
-   - Možnosť zobraziť pamäť závad
-   - Čítanie meraných hodnôt z ECU
-   - Testovanie aktuátorov a resetovanie parametrov
+-   **Prémiová verzia (Premium Laser AR-HUD):** Využíva drahšiu verziu aplikácie v kombinácii so špeciálnym laserovým AR-HUD projektorom, ktorý vo všetkých troch režimoch (ECO, PERFORMANCE, RACE) premieta navádzanie vo forme plynulej sekvencie 3D farebných šípok priamo na povrch vozovky.
 
-2. **Vhodnosť k použitiu (Usability - U)**
-   - Užívateľsky prívetivý rozhranie
-   - Intuitívne ovládanie pre profesionálov aj laikov
+V bežnej premávke je dodržiavanie rýchlosti monitorované; pri dlhodobom a hrubom porušení predpisov sa vyhotoví šifrovaný záznam pre **Dopravnú políciu SR / Tretiu stranu**.
 
-3. **Spoľahlivosť (Reliability - R)**
-   - Nízka miera zlyhaní, konzistentná diagnostika
-   - Obnovenie systému v prípade zlyhania
+## 2. Dôvod a okolnosti zavedenia riešenia
 
-4. **Výkon (Performance - P)**
-   - Rýchla diagnostika s nízkou spotrebou zdrojov
+Klasické navigácie a palubné počítače vyžadujú odvracanie zraku od cesty. SmartHUD prenáša len najdôležitejšie informácie (spomalenie, zóna brzdenia, kolóna, limit) priamo do zorného poľa -- či už ako 2D reflexný obraz (cez zrkadliaci telefón alebo samostatný 2D projektor), alebo ako laserová 3D projekcia na vozovku.
 
-5. **Schopnosť údržby (Supportability - S)**
-   - Jednoduché aktualizácie a testovanie systému
-   - Podpora pre nové modely vozidiel
+Zavedenie samostatného 2D HUD projektora v základnej verzii priamo odpovedá na prevádzkové riziko prehrievania mobilných telefónov umiestnených za čelným sklom na priamom slnku. Možnosť voľby režimu jazdy (ECO / PERFORMANCE / RACE) robí systém univerzálnym a prítomnosť bezpečnostného modulu naviac pôsobí preventívne proti agresívnej jazde na verejných komunikáciách.
 
----
+## 3. Popis projektu (slovné zadanie, popis od zákazníka)
 
-## Kritické situácie
-1. **Systémové**
-   - Výpadok napájania: Systém nie je schopný vykonať diagnostiku bez napájania.
-   - Zlyhanie hardware: Poškodenie senzorov alebo ECU vedie k nepresnej diagnostike.
+Projekt je zameraný na vývoj inteligentnej aplikácie s podporou HUD projekcie s nasledujúcimi funkciami:
 
-2. **Aplikačné**
-   - Problémy s komunikáciou medzi diagnostickým zariadením a OBD-II portom vozidla.
+-   **Nastaviteľnosť režimov:** Vodič si v aplikácii zvolí aktívny režim podľa situácie (ECO, PERFORMANCE, RACE).
 
----
+-   **Modulárne a flexibilné HUD rozhranie:** Podpora pre zrkadlenie smartfónu, samostatný slabší 2D HUD projektor (prevencia prehriatia telefónu), ako aj prémiový laserový AR projektor s 3D šípkami na vozovke.
 
-## Tri situácie definujúce hranice systému
-1. **Ideálny scenár**
-   - Systém úspešne vykoná diagnostiku, zobrazuje chybové kódy a poskytuje potrebné informácie pre opravu vozidla.
+-   **Prepojenie s vozidlom:** Zber dát z GPS, dopravných serverov, OBD-II zbernice a adaptívneho tempomatu (ACC).
 
-2. **Hranične riešiteľný scenár**
-   - Systém nedokáže identifikovať konkrétnu závadu, ale poskytne návrh na ďalšiu diagnostiku.
+-   **Dohľad a bezpečnosť:** Generovanie záznamov porušení rýchlosti pre Políciu SR pri jazde v ECO móde.
 
-3. **Situácie, ktoré systém nezvládne**
-   - Systém nie je schopný vykonať diagnostiku v prípade úplného zlyhania ECU alebo riadiacej jednotky.
+## 4. Analýza požiadaviek
 
----
+### Funkčné požiadavky
 
-## Kontext prostredia
-Systém bude implementovaný ako samostatné riešenie, ktoré nebude závislé od existujúcich systémov. Bude musieť zohľadňovať rôzne environmentálne faktory, ako je teplota, vlhkosť a typ terénu, ktoré môžu ovplyvniť diagnostiku.
+-   Možnosť voľby aktívneho režimu (ECO / PERFORMANCE / RACE) v používateľskom rozhraní.
 
----
+-   Renderovanie 2D zrkadleného HUD (telefón alebo samostatný 2D projektor) alebo 3D laserových šípok na vozovku (podľa HW verzie).
 
-## Charakteristika aktérov a prostredia
-- **Aktéri**: Mechanik, technik, výrobca automobilov, majiteľ vozidla
-- **Prostredie**: Auto servis, mobilné zariadenia, diagnostické nástroje
+-   Priebežné určovanie polohy, rýchlosti a smeru vozidla.
 
----
+-   Prijímanie informácií o kolónach a rýchlostných meškaniach.
 
-## Use Case diagram
-- **Minimálne 5 modulov a 2 aktéry**
-- Doporučené maximum: 5 modulov s využitím `include` a `extend` vzťahov.
+-   Čítanie a synchronizácia s adaptívnym tempomatom (ACC) a CAN zbernicou.
 
----
+-   Vytvorenie a šifrované uloženie záznamu porušenia rýchlosti pre Políciu SR pri dlhodobom prekročení v ECO móde.
 
-## Scenáre - konkrétna implementácia Use Case
+### Nefunkčné požiadavky
 
-**1. Vyhľadávanie kódového chybového hlásenia**  
-   - **Názov**: Vyhľadanie chybového kódu P0300  
-   - **Kontext**: Mechanik chce diagnostikovať problém s motorom vozidla.  
-   - **Level zanoření Use Case**: Hlavný scénar  
-   - **Aktéri**: Mechanik  
-   - **Stakeholdeři a zájmové osoby**: Mechanici, majitelia vozidiel  
-   - **Vstupné podmienky**: Mechanik má prístup k OBD-II diagnostickej jednotke  
-   - **Výstupné podmienky**: Zobrazenie chybového kódu  
-   - **Minimálny výstup**: Zobrazenie chybového kódu  
-   - **Ideálny výstup**: Zobrazenie detailných informácií o závade
+-   Obnovovacia frekvencia zobrazenia min. 5--10 Hz (pre laserový AR-HUD až 30 Hz).
 
-**Hlavný scénár**:  
-1. Mechanik pripojí OBD-II jednotku k vozidlu.  
-2. Systém vykoná diagnostiku a zobraziť chybový kód.
+-   Latencia spracovania do 200 ms.
 
-**Rozšírenie**:  
-- Ak diagnostika zlyhá, zobrazí sa chybová hláška a mechanik sa musí pripojiť manuálne.
+-   Tepelná odolnosť základnej verzie vďaka alternatíve so samostatným 2D HUD projektorom.
 
----
+-   Vysoká čitateľnosť laserových šípok aj počas jasného dňa.
 
-## Sekvenčný diagram
-- Vytvorte sekvenčný diagram, ktorý ukáže interakcie medzi mechanikom, diagnostickým nástrojom a vozidlom.
+-   Kryptografická ochrana neporušiteľnosti záznamov pre Políciu SR.
 
----
+### Zoznam modulov projektu a ich atribútov
 
-## Triedny diagram
-- Zobraziť triedy ako `Vehicle`, `ECUDiagnosticTool`, `OBD2_Codes` a ich vzťahy.
+-   **Modul správcu režimov (Mode Selector):** Aktívny režim, stav autorizácie, ID relácie.
 
----
+-   **Modul HUD projekcie (2D Smartfón / 2D HUD Projektor / Laser AR-HUD):** Typ zariadenia, jas, HW profil, 3D/2D geometria, ID zariadenia.
 
-## Aktivitný diagram — *bonus*
+-   **Modul GPS a mapových dát:** Poloha, rýchlosť, trasa, rýchlostný limit, ID úseku.
 
-> Nie je povinný. Za dobre spracovaný diagram sú **plusové body**.
+-   **Modul dopravných informácií:** Stav premávky, kolóna, meškanie, ID udalosti.
 
-Vezmite **jeden zložitejší scenár** z kapitoly *Scenáre* (ideálne taký, kde je
-vetvenie alebo viac krokov za sebou) a rozkreslite jeho tok ako **diagram aktivít**:
+-   **Modul ADAS / OBD-II integrácie:** Rýchlosť z CAN, odstup, stav ACC, ID vozidla.
 
-- počiatočný uzol → akcie → **rozhodovací uzol** s podmienkami `[…]` → koncový uzol
-- ak v scenári niečo prebieha súbežne, použite **fork / join**
-- ak je pri akcii jasné, kto ju vykonáva (mechanik vs systém), rozdeľte akcie do **plaveckých dráh**
+-   **Modul záznamu porušení (Polícia SR):** Trvanie prekročenia, nameraná rýchlosť, limit, stav odoslania, ID záznamu.
 
-Notácia a hotový príklad: [Úvod do softvérového inžinierstva → Diagram aktivít](/citacka.html?s=oop&doc=uvod-do-si#diagram-aktivit)
+-   **Modul fyziky a podmienok (Performance & RaceHUD):** Priľnavosť, počasie, stav bŕzd, brzdné body, ID traťového profilu.
 
----
+## 5. Systémové požiadavky (FURPS)
 
-## BPMN diagram — *bonus*
++--------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| **Kategória**            | **Požiadavka**                                                                                                             |
++==========================+============================================================================================================================+
+| **Funkčnosť (F)**        | \- Tri prepínateľné režimy (ECO, PERFORMANCE, RACE).                                                                       |
+|                          |                                                                                                                            |
+|                          | \- Podpora dvoch základných 2D HW alternatív (telefón+podložka / samostatný 2D projektor) a prémiovej laserovej AR verzie. |
+|                          |                                                                                                                            |
+|                          | \- Prepojenie s ADAS/ACC.                                                                                                  |
+|                          |                                                                                                                            |
+|                          | \- Záznam porušenia rýchlosti pre Políciu SR v ECO móde.                                                                   |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| **Použiteľnosť (U)**     | \- Intuitívne prepínanie režimov pred jazdou.                                                                              |
+|                          |                                                                                                                            |
+|                          | \- Odstránenie rizika prehrievania telefónu voľbou dedikovaného 2D projektora.                                             |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| **Spoľahlivosť (R)**     | \- Hardware fail-over (prepnutie z laseru na 2D projektor alebo telefón).                                                  |
+|                          |                                                                                                                            |
+|                          | \- Šifrovaný lokálny sklad pre záznamy porušení.                                                                           |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| **Výkon (P)**            | \- Latencia \< 200 ms, obnovovacia frekvencia až 30 Hz pre laserovú projekciu.                                             |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| **Schopnosť údržby (S)** | \- Modulárna podpora rôznych typov displejov a HUD projektorov prostredníctvom jednotného rozhrania.                       |
++--------------------------+----------------------------------------------------------------------------------------------------------------------------+
 
-> Nie je povinný. Za dobre spracovaný diagram sú **plusové body**.
+## 6. Kritické situácie
 
-BPMN nie je súčasťou UML — je to štandard na modelovanie **biznis procesu**, do
-ktorého systém zapadá. Ukážte **jeden proces** okolo vášho systému (napr. „príjem
-vozidla do servisu a diagnostika") a zamerajte sa na:
+### Systémové
 
-- **bazén a dráhy** — kto je účastník (zákazník, mechanik, systém)
-- **typy úloh** — čo robí človek cez systém (*user task*) vs čo systém automaticky (*service task*)
-- **brány** — kde sa proces vetví (`×` exkluzívna brána)
-- **štartovú a koncové udalosti**
+-   **Prehriatie smartfónu:** V základnej verzii sa toto riziko efektívne eliminuje prepnutím na alternatívny samostatný 2D HUD projektor, ktorý funguje nezávisle od displeja telefónu a zvláda vysoké teploty na palubnej doske.
 
-Notácia, typy úloh a hotový príklad: [Úvod do softvérového inžinierstva → BPMN](/citacka.html?s=oop&doc=uvod-do-si#bpmn-procesny-pohlad)
+-   **Zlyhanie laserového AR projektora:** Systém sa automaticky prepne do záložného 2D režimu (na samostatný 2D projektor alebo na displej telefónu).
 
----
+-   **Strata GPS signálu:** Dočasné pozastavenie zobrazenia AR šípok/gradientu a zobrazenie varovania pre vodiča.
 
-## Wireframe kľúčových obrazoviek — *bonus*
+### Aplikačné
 
-> Nie je povinný. Za dobre spracovaný wireframe sú **plusové body**.
+-   **Ochrana spotrebiteľa a upozornenie:** Jasné poučenie vodiča, že v ECO móde sa nadmerné prekročenie limitu zaznamenáva pre Políciu SR.
 
-Načrtnite **2–3 kľúčové obrazovky** vášho systému — nízkofidelitný wireframe
-(rozloženie prvkov, žiadne farby ani finálny dizajn). Každú obrazovku viažte na
-konkrétny use case (napr. formulár novej žiadanky = UC „vytvoriť žiadanku",
-zoznam so stavmi = UC „sledovať stav").
+-   **Detekcia neoprávneného použitia Race módu:** Ak je RaceHUD zapnutý na verejnej ceste, GPS automaticky aktivuje štandardné rýchlostné limity a monitoring.
 
-Toto je zároveň **návrh aplikácie, ktorú budete postupne implementovať** na
-hodinách programovania — oplatí sa navrhnúť niečo, čo naozaj chcete mať hotové.
+## 7. Hranice systému
 
-Úrovne (wireframe → mockup → prototyp) a hotový príklad:
-[Úvod do softvérového inžinierstva → Wireframe a mockup](/citacka.html?s=oop&doc=uvod-do-si#wireframe-a-mockup)
+-   **Ideálny stav:** Plne funkčný Laser AR-HUD (alebo samostatný 2D projektor bez rizika prehriatia), GPS, live dopravné dáta a aktívne CAN/ACC prepojenie.
 
----
+-   **Základný stav (Alternatíva 1):** Samostatný 2D HUD projektor pre stálu prevádzku v horúčavách.
 
+-   **Základný stav (Alternatíva 2):** Smartfón na 2D zrkadlovej podložke. Zobrazuje sa farebný gradient a ikonové výstrahy.
 
-# Rozšírenie FURPS analýzy pre projekt diagnostického softvéru pre automobily
+-   **Mimo hraníc:** Absolútna strata signálu (napr. dlhý podzemný tunel) bez OBD-II snímania. Aplikácia bezpečne preruší projekciu.
 
-## 1. **S.M.A.R.T. Ciele (Specific, Measurable, Achievable, Relevant, Time-bound)**
-Táto metodika pomáha definovať jasné a merateľné ciele, ktoré by mal systém splniť. Použitie tejto analýzy môže byť veľmi užitočné na určenie konkrétnych cieľov pre implementáciu systému:
-- **Specific (Špecifické)**: Čo presne má systém robiť? (napr. čítanie diagnostických kódov)
-- **Measurable (Merateľné)**: Ako budeme hodnotiť úspech? (napr. doba odozvy systému pri diagnostike)
-- **Achievable (Dosiahnuteľné)**: Je tento cieľ realistický s dostupnými zdrojmi?
-- **Relevant (Relevantné)**: Má tento cieľ skutočne hodnotu pre používateľov systému?
-- **Time-bound (Časovo ohraničené)**: Kedy by mal byť cieľ dosiahnutý?
+## 8. Kontext prostredia
 
----
+Aplikácia pracuje v interiéri vozidla spojená s telefónom, reflexnou podložkou, samostatným 2D HUD projektorom alebo pokročilým laserovým AR projektorom. Prostredníctvom bezdrôtových a káblových sietí komunikuje s mapovými servermi, ADAS jednotkou vozidla a rozhraním pre **Dopravnú políciu SR / Tretiu stranu**.
 
-## 2. **SWOT analýza (Strengths, Weaknesses, Opportunities, Threats)**
-SWOT analýza je skvelý nástroj na hodnotenie silných a slabých stránok systému, ako aj príležitostí a hrozieb, ktoré môžu ovplyvniť jeho úspešnosť:
-- **Strengths (Silné stránky)**: Aké sú hlavné výhody systému (napr. vysoká spoľahlivosť)?
-- **Weaknesses (Slabé stránky)**: Kde má systém slabiny (napr. obmedzená podpora pre staršie modely vozidiel)?
-- **Opportunities (Príležitosti)**: Aké príležitosti existujú pre rozšírenie systému (napr. pripojenie na mobilné aplikácie)?
-- **Threats (Hrozby)**: Aké externé faktory by mohli ohroziť systém (napr. technológie konkurentov)?
+## 9. Charakteristika aktérov
 
----
+-   **Vodič:** Primárny používateľ vyžadujúci prehľadné navádzanie, voľbu HW zobrazenia a voľbu režimu (ECO / PERFORMANCE / RACE).
 
-## 3. **Risk Analysis (Analýza rizík)**
-Risk analýza sa zameriava na identifikáciu a hodnotenie potenciálnych rizík spojených s vývojom a implementáciou systému:
-- **Technologické riziká**: Napríklad problémy s integráciou nových modelov vozidiel alebo zmeny v OBD-II protokole.
-- **Projektové riziká**: Napríklad oneskorenie v implementácii alebo nepredvídané náklady.
-- **Bezpečnostné riziká**: Riziká spojené s ochranou dát a citlivých informácií.
+-   **Palubný ADAS / OBD systém:** Poskytuje telemetrické dáta z vozidla (rýchlosť, odstup, stav tempomatu).
 
----
+-   **Tretia strana (Dopravná polícia SR):** Prijímateľ správ pri zistení závažného a dlhodobého prekročenia limitov na verejných cestách.
 
-## 4. **UML (Unified Modeling Language) Diagramy**
-Okrem FURPS analýzy môžu študenti využiť aj rôzne UML diagramy, ako sú:
-- **Triedne diagramy**: Ukazujú štruktúru systému a jeho komponenty (triedy a objekty) s atribútmi a metódami.
-- **Sekvenčné diagramy**: Ukazujú časovú posloupnosť udalostí a interakcií medzi rôznymi komponentami systému.
-- **Stavové diagramy**: Zobrazujú rôzne stavy systému a prechody medzi nimi na základe určitých podmienok.
-- **Aktivitné diagramy**: Vizualizujú tok aktivít v systéme a rozhodovanie medzi rôznymi operáciami.
+## 10. Use Case diagram
 
----
+Diagram zobrazuje aktérov (Vodič, ADAS, Tretia strana / Polícia SR) a hlavné prípady použitia: voľba režimu a zobrazenia, zobrazenie HUD odporúčania (zahrňuje získanie dopravných dát), synchronizácia s ACC a sprístupnenie záznamu porušení.
 
-## 5. **Agilné metodiky (Scrum, Kanban)**
-Pre projektový manažment je možné použiť agilné metodiky na riadenie vývoja systému. Tieto metodiky sú obzvlášť užitočné pri dynamických projektoch, kde sa môže meniť rozsah a požiadavky:
-- **Scrum**: Metodika, ktorá sa zameriava na pravidelné iterácie a tým aj rýchlejšie nasadzovanie nových funkcií.
-- **Kanban**: Vizualizuje pracovný tok a umožňuje sledovať stav jednotlivých úloh v reálnom čase.
+![](media/image1.png){width="5.854574584426946in" height="4.341332020997375in"}
 
----
+## 11. Scenáre (Implementácia Use Case)
 
-## 6. **Testovacia analýza (Testovanie kvality)**
-Kvalitné testovanie je neoddeliteľnou súčasťou každého systému. Testovacia analýza by mala zahŕňať:
-- **Unit Testing (Jednotkové testy)**: Testovanie jednotlivých komponentov systému.
-- **Integration Testing (Integračné testy)**: Testovanie interakcie medzi rôznymi časťami systému.
-- **Acceptance Testing (Akceptačné testy)**: Overenie, či systém spĺňa požiadavky používateľa a obchodné ciele.
+### Scenár 1: Zobraziť HUD odporúčanie (ECO Mód)
 
----
+Vodič jazdí v premávke. Systém vypočíta odporúčanú rýchlosť a zobrazí ju cez zrkadlený telefón, samostatný 2D HUD projektor alebo 3D laserové šípky. Ak vodič dlhodobo prekračuje limit, vygeneruje sa záznam pre Políciu SR.
 
-## 7. **Vývojový životný cyklus (SDLC - Software Development Life Cycle)**
-Pre štruktúrovaný vývoj môže byť užitočné dodržiavať niektorý z modelov vývojového životného cyklu:
-- **Waterfall**: Tradičný prístup s fázami ako analýza, návrh, implementácia a testovanie.
-- **Agile**: Flexibilnejší prístup s častými iteráciami a zlepšovaním systému.
+### Scenár 2: Synchronizovať s adaptívnym tempomatom (ACC)
 
----
+Systém sa prepojí s CAN zbernicou a prispôsobuje farebné indikácie nastavenej rýchlosti a odstupu tempomatu.
 
-# Zhrnutie
-Na obohatenie tvojej video analýzy FURPS môžeš zvážiť pridanie ďalších metodík a nástrojov ako:
-- **S.M.A.R.T. Ciele** na definovanie konkrétnych a merateľných cieľov.
-- **SWOT analýza** na hodnotenie silných a slabých stránok systému.
-- **Risk Analysis** na identifikáciu a hodnotenie potenciálnych rizík.
-- **UML diagramy** na vizualizáciu a detailnejšie pochopenie systému.
-- **Agilné metodiky** na riadenie projektu a iteratívny vývoj.
-- **Testovacia analýza** na zabezpečenie kvality systému.
-- **SDLC modely** na riadenie vývoja.
+### Scenár 3: Aktivovať PERFORMANCE / RACE Mód
 
-Tieto metódy a analýzy môžu študentom pomôcť lepšie pochopiť rôzne aspekty systému a jeho vývoja, čo je veľmi užitočné pri implementácii skutočných softvérových riešení.
+Vodič zvolí športový režim. Systém vynechá obmedzenia rýchlosti (pri schválení/na okruhu) a zobrazuje navádzanie ideálnej stopy a brzdných bodov.
 
+## 12. Sekvenčný diagram
+
+Znázorňuje časový priebeh od inicializácie, cez výber HW výstupu (telefón / 2D projektor / Laser AR), výber režimu, periodický zber dát, výpočet projekcie až po prípadné vytvorenie a odoslanie záznamu porušenia Polícii SR.
+
+![](media/image2.png){width="5.875449475065617in" height="4.03487532808399in"}
+
+## 13. Triedny diagram
+
+Objektový model obsahujúci triedy Jazda (s atribútom rezim), HUDRenderer (s podporou pre 2D Smartfón, 2D HUD Projektor a Laser AR), ADASRozhranie, ÚsekCesty, OdporúčaciaZóna, ZáznamJazdy a TretiaStrana (Polícia SR).
+
+![](media/image3.png){width="5.849219160104987in" height="6.191232502187226in"}
+
+## 14. Aktivitný diagram
+
+Rieši vývojový diagram: Získanie polohy -\> Detekcia HW zobrazovača -\> Kontrola zvoleného režimu -\> Výpočet rýchlosti -\> Vykreslenie projekcie -\> Vyhodnotenie prekročenia limitu -\> Správa záznamu.
+
+![](media/image4.png){width="6.268055555555556in" height="9.402083333333334in"}
+
+## 15. BPMN diagram
+
+Procesné dráhy (Vodič, Aplikácia SmartHUD, Vozidlo/ADAS, Externé služby, Tretia strana - Polícia SR) popisujúce tok správ a riadenia pri používaní systému s podporou rôznych HW rozhraní.
+
+![](media/image5.png){width="6.268055555555556in" height="4.178472222222222in"}
+
+## 16. Wireframe kľúčových obrazoviek
+
+1.  **Nastavenie režimov a HW:** Výber ECO / PERFORMANCE / RACE a voľba HW výstupu (Displej telefónu / Samostatný 2D HUD projektor / Laser AR-HUD).
+
+2.  **Basic 2D HUD (Telefón / 2D Projektor):** Zrkadlené/priame rozhranie s farebným gradientom odporúčanej rýchlosti.
+
+3.  **Premium Laser AR-HUD:** Vizualizácia 3D farebných šípok premietaných priamo na cestu pred autom.
+
+4.  **Diagnostika a ADAS:** Správa pripojenia k OBD-II, 2D projektoru a ACC.
+
+## 17. Záver
+
+SmartHUD vo verzii 1.4 predstavuje kompletné, vysoko prispôsobivé riešenie. Spája tri plnohodnotné režimy jazdy s trojúrovňovou hardvérovou variabilitou (dostupná 2D podložka pre telefón, samostatný 2D HUD projektor riešiaci problém s prehrievaním smartfónu a prémiový Laserový AR-HUD s 3D šípkami na vozovke). Vďaka transparentnej spolupráci s **Dopravnou políciu SR** v bežnej premávke výrazne zvyšuje bezpečnosť a plynulosť cestnej premávky.
